@@ -1,0 +1,46 @@
+language: "ja-JP"
+
+reviews:
+  profile: "assertive"
+  high_level_summary: true
+  review_status: true
+  request_changes_workflow: false
+  auto_review:
+    enabled: true
+    drafts: false
+
+  path_instructions:
+    - path: "src/test/resources/features/**/*.feature"
+      instructions: |
+        BDD のフィーチャーファイルをレビューしてください。以下の点を確認してください。
+        - シナリオに技術用語（HTTPステータスコード・JSON・レスポンス・エンドポイント等）が含まれていないか
+        - 非エンジニアが読んで意味がわかる言葉で書かれているか
+        - `# language: ja` が先頭にあるか
+        - 正常系シナリオに `@smoke` タグが付いているか
+        - ドメインタグ（@auth / @profile / @matching / @message）が付いているか
+        - 背景（背景:）を使って重複する前提条件を共通化しているか
+
+    - path: "src/test/java/**/bdd/steps/**/*.java"
+      instructions: |
+        Cucumber ステップ定義クラスをレビューしてください。以下の点を確認してください。
+        - HTTPステータスコードや JSON の検証がステップ定義の中に閉じ込められているか（feature ファイルに漏れていないか）
+        - ステップ文字列が feature ファイルの記述と一致しているか
+        - `@Before` フックで DB リセットが行われているか
+        - ドメインごとにクラスが分割されているか（AuthSteps / ProfileSteps 等）
+
+    - path: "src/main/java/**/*.java"
+      instructions: |
+        Spring Boot のアプリケーションコードをレビューしてください。以下の点を確認してください。
+        - Controller → Service → Repository の責務分離が守られているか
+        - DTO に Java record を使用しているか
+        - カスタム例外を使い `@ControllerAdvice` で統一ハンドリングしているか
+        - コメントは「なぜ」が非自明な箇所のみに限定されているか
+
+    - path: "build.gradle.kts"
+      instructions: |
+        Gradle ビルドファイルをレビューしてください。
+        - 不要な依存関係が含まれていないか
+        - テスト用依存関係が testImplementation スコープになっているか
+
+chat:
+  auto_reply: true
