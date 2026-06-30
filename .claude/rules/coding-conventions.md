@@ -1,4 +1,5 @@
 # コーディング規約
+
 ## 基本方針
 
 - **パッケージ**: `com.example.matching`
@@ -64,6 +65,12 @@ public class UserRegistrationService {
         }
         // ...
     }
+
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
+    }
 }
 ```
 
@@ -104,7 +111,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ## 例外処理
 
-カスタム例外 + `@ControllerAdvice` で一元ハンドリングする。
+カスタム例外 + `@RestControllerAdvice` で一元ハンドリングする。
 
 ```java
 // カスタム例外（ドメイン層）
@@ -137,7 +144,7 @@ public class GlobalExceptionHandler {
 public record RegisterRequest(
     @NotBlank String name,
     @Email @NotBlank String email,
-    @Size(min = 8) String password
+    `@Size`(min = 8, max = 128) String password
 ) {}
 ```
 

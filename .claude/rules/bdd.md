@@ -140,6 +140,7 @@ feature ファイルはビジネス・開発・QA の三者が共通言語とし
 
 ```java
 @Component
+@ScenarioScope
 public class AuthSteps {
 
     @Autowired
@@ -153,6 +154,7 @@ public class AuthSteps {
     @Before
     public void setUp() {
         userRepository.deleteAll();
+        response = null;
     }
 
     @Given("メールアドレスが未登録である")
@@ -191,8 +193,9 @@ public class AuthSteps {
 ```
 
 **ポイント**:
+- `@ScenarioScope`（`io.cucumber.spring.ScenarioScope`）を付与してシナリオ単位でインスタンスを生成する。`@Component` のデフォルトはシングルトンのため、並列実行時に `response` などのフィールドがシナリオ間で漏洩する
+- `@Before` で `response = null` を明示的にリセットする。`@When` が実行されないシナリオや例外発生時に前シナリオの値が残るのを防ぐ
 - シナリオの日本語をそのままメソッド名にする（Cucumber が自動でマッピング）
-- `response` のような状態はフィールドに持つ（ステップ間で共有）
 - アサーションには AssertJ（`assertThat`）を使う
 
 ## タグ運用
