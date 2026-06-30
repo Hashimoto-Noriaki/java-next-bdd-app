@@ -2,6 +2,9 @@ package com.example.matching.application;
 
 import com.example.matching.domain.Profile;
 import com.example.matching.domain.User;
+import com.example.matching.domain.exception.DuplicateProfileException;
+import com.example.matching.domain.exception.ProfileNotFoundException;
+import com.example.matching.domain.exception.UserNotFoundException;
 import com.example.matching.infrastructure.ProfileRepository;
 import com.example.matching.infrastructure.UserRepository;
 import com.example.matching.presentation.dto.CreateProfileRequest;
@@ -23,7 +26,11 @@ public class ProfileService {
 
     public ProfileResponse create(String email, CreateProfileRequest request) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("ユーザーが見つかりません"));
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        if (profileRepository.existsByUser(user)) {
+            throw new DuplicateProfileException();
+        }
 
         Profile profile = new Profile(user, request.gender(), request.age(), request.prefecture());
         profile.setOccupation(request.occupation());
@@ -42,9 +49,9 @@ public class ProfileService {
 
     public ProfileResponse update(String email, CreateProfileRequest request) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("ユーザーが見つかりません"));
+                .orElseThrow(() -> new UserNotFoundException(email));
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalStateException("プロフィールが見つかりません"));
+                .orElseThrow(() -> new ProfileNotFoundException("プロフィールが見つかりません"));
 
         profile.setGender(request.gender());
         profile.setAge(request.age());
@@ -65,18 +72,18 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public ProfileResponse getMyProfile(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("ユーザーが見つかりません"));
+                .orElseThrow(() -> new UserNotFoundException(email));
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalStateException("プロフィールが見つかりません"));
+                .orElseThrow(() -> new ProfileNotFoundException("プロフィールが見つかりません"));
         return toResponse(profile);
     }
 
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("ユーザーが見つかりません"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalStateException("プロフィールが見つかりません"));
+                .orElseThrow(() -> new ProfileNotFoundException("プロフィールが見つかりません"));
         return toResponse(profile);
     }
 

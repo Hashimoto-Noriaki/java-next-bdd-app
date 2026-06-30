@@ -233,26 +233,31 @@ public class ProfileSteps {
     @ならば("「性別を選択してください」と表示される")
     public void 性別を選択してくださいと表示される() {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).contains("性別を選択してください");
     }
 
     @ならば("「年齢を入力してください」と表示される")
     public void 年齢を入力してくださいと表示される() {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).contains("年齢を入力してください");
     }
 
     @ならば("「18歳以上の方のみご利用いただけます」と表示される")
     public void 歳以上の方のみご利用いただけますと表示される() {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).contains("18歳以上の方のみご利用いただけます");
     }
 
     @ならば("「住まいを選択してください」と表示される")
     public void 住まいを選択してくださいと表示される() {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).contains("住まいを選択してください");
     }
 
     @ならば("「自己紹介文は500文字以内で入力してください」と表示される")
     public void 自己紹介文は文字以内で入力してくださいと表示される() {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).contains("自己紹介文は500文字以内で入力してください");
     }
 
     @ならば("ログインを求めるメッセージが表示される")

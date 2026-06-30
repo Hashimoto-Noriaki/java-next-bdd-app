@@ -26,10 +26,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (jwtUtil.validateToken(token)) {
+            try {
                 String email = jwtUtil.getEmailFromToken(token);
                 var auth = new UsernamePasswordAuthenticationToken(email, null, List.of());
                 SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (Exception e) {
+                // Invalid or expired token - continue without authentication
             }
         }
         filterChain.doFilter(request, response);
