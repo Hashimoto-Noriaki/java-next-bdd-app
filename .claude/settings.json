@@ -1,8 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew *)",
-      "Bash(java *)",
+      "Bash(./gradlew test)",
+      "Bash(./gradlew test *)",
+      "Bash(./gradlew build)",
+      "Bash(./gradlew compileJava)",
+      "Bash(./gradlew compileTestJava)",
+      "Bash(./gradlew bootRun)",
+      "Bash(./gradlew tasks)",
+      "Bash(./gradlew dependencies)",
+      "Bash(./gradlew clean)",
+      "Bash(java -version)",
       "Bash(find src *)",
       "Bash(find .claude *)",
       "Bash(grep -* src/*)",
