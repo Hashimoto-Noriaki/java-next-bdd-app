@@ -4,14 +4,35 @@
       "Bash(./gradlew *)",
       "Bash(java *)",
       "Bash(find src *)",
-      "Bash(grep * src/*)",
+      "Bash(find .claude *)",
+      "Bash(grep -* src/*)",
+      "Bash(grep -* .claude/*)",
       "Bash(mkdir -p src/*)",
       "Bash(git status)",
       "Bash(git diff *)",
       "Bash(git log *)",
       "Bash(git add src/*)",
+      "Bash(git add .claude/*)",
+      "Bash(git add *.md)",
+      "Bash(git add *.kts)",
       "Bash(git commit *)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(rm *)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
+      "Bash(git rebase *)",
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(sudo *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(kill *)",
+      "Bash(pkill *)",
+      "Bash(psql *)",
+      "Bash(dropdb *)"
+    ]
   }
 }
