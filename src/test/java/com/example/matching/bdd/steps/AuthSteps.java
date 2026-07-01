@@ -1,6 +1,8 @@
 package com.example.matching.bdd.steps;
 
 import com.example.matching.bdd.ScenarioContext;
+import com.example.matching.infrastructure.LikeRepository;
+import com.example.matching.infrastructure.MatchRepository;
 import com.example.matching.infrastructure.ProfileRepository;
 import com.example.matching.infrastructure.UserRepository;
 import com.example.matching.presentation.dto.LoginRequest;
@@ -33,6 +35,12 @@ public class AuthSteps {
     private ProfileRepository profileRepository;
 
     @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
+
+    @Autowired
     private ScenarioContext scenarioContext;
 
     public AuthSteps() {
@@ -46,6 +54,8 @@ public class AuthSteps {
 
     @Before
     public void setUp() {
+        matchRepository.deleteAll();
+        likeRepository.deleteAll();
         profileRepository.deleteAll();
         userRepository.deleteAll();
         response = null;
