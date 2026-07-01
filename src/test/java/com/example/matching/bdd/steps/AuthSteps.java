@@ -1,7 +1,10 @@
 package com.example.matching.bdd.steps;
 
+import com.example.matching.bdd.ScenarioContext;
+import com.example.matching.infrastructure.ProfileRepository;
 import com.example.matching.infrastructure.UserRepository;
 import com.example.matching.presentation.dto.LoginRequest;
+import com.example.matching.presentation.dto.LoginResponse;
 import com.example.matching.presentation.dto.RegisterRequest;
 import io.cucumber.java.Before;
 import io.cucumber.java.ja.かつ;
@@ -26,6 +29,12 @@ public class AuthSteps {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
+    private ScenarioContext scenarioContext;
+
     public AuthSteps() {
         this.restTemplate = new RestTemplate();
         this.restTemplate.setErrorHandler(response -> false);
@@ -37,6 +46,7 @@ public class AuthSteps {
 
     @Before
     public void setUp() {
+        profileRepository.deleteAll();
         userRepository.deleteAll();
         response = null;
         lastEmail = null;
@@ -59,6 +69,24 @@ public class AuthSteps {
         registerUser("テストユーザー", email, "password123");
         lastEmail = email;
         lastPassword = "password123";
+    }
+
+    @前提("ユーザーとしてログイン済みである")
+    public void ユーザーとしてログイン済みである() {
+        String email = "taro@example.com";
+        String password = "password123";
+        registerUser("山田太郎", email, password);
+        ResponseEntity<LoginResponse> loginResponse = restTemplate.postForEntity(
+                url("/auth/login"),
+                new LoginRequest(email, password),
+                LoginResponse.class
+        );
+        scenarioContext.setJwtToken(loginResponse.getBody().token());
+    }
+
+    @前提("ログアウト状態である")
+    public void ログアウト状態である() {
+        scenarioContext.setJwtToken(null);
     }
 
     @もし("ユーザーが名前・メール・パスワードを入力して登録する")
