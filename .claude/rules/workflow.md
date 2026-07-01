@@ -24,16 +24,33 @@ Claude:      → シナリオ候補を提案
 
 ## 1ユースケースの開発サイクル
 
-```
+### Phase 1: シナリオ（feature/scenario-xxx ブランチ）
+
+```text
 1. ユーザーが要件を伝える（技術的でも日常語でも可）
 2. Claude がシナリオ候補（Gherkin）を提案
-3. ユーザーが承認 or 修正
-4. feature ファイルに書いて ./gradlew test → Red 確認
-5. ステップ定義を実装
-6. Controller → Service → Repository の順で実装
-7. ./gradlew test → Green 確認
-8. リファクタリング → コミット
+3. ユーザーが承認 or 修正                        ← ここで一度止まる
+4. @wip タグ付きで feature ファイルに書く
+5. ./gradlew test → Red 確認
+6. test: シナリオ追加 としてコミット
+7. PR を作成 → レビュー → master にマージ
 ```
+
+### Phase 2: 実装（feature/impl-xxx ブランチ）
+
+```text
+8. ステップ定義を実装
+9. Controller → Service → Repository の順で実装
+10. ./gradlew test → Green 確認
+11. シナリオから @wip タグを外す
+12. feat: 機能実装 としてコミット
+13. PR を作成 → レビュー → master にマージ
+```
+
+**2フェーズに分ける理由**:
+- 「何を作るか」を先に master に記録し、非エンジニアがレビューできる
+- `@wip` タグにより CI はシナリオ単独マージで壊れない
+- 実装 PR のレビュー時に「シナリオ通りに動くか」を軸に見られる
 
 ## よく使うコマンド
 

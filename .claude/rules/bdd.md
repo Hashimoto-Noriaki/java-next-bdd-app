@@ -238,5 +238,5 @@ public class AuthSteps {
 |---|---|
 | `@smoke` | 最低限の動作確認（CI必須） |
 | `@regression` | 全回帰テスト |
-| `@wip` | 作業中（CIから除外） |
+| `@wip` | 実装前のシナリオ（CI から除外）。実装完了後に外す |
 | `@auth` / `@profile` / `@matching` | ドメイン別実行 |
