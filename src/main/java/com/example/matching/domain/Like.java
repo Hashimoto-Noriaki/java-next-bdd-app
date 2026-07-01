@@ -36,4 +36,18 @@ public class Like {
     public Long getId() { return id; }
     public User getSender() { return sender; }
     public User getReceiver() { return receiver; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Like like = (Like) o;
+        if (id == null) return false;
+        return id.equals(like.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

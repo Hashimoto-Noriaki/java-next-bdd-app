@@ -39,10 +39,19 @@ public class MatchingService {
         User receiver = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new UserNotFoundException(targetUserId));
 
+        if (sender.getId().equals(receiver.getId())) {
+            throw new IllegalArgumentException("Cannot send like to yourself");
+        }
+
+        if (likeRepository.existsBySenderAndReceiver(sender, receiver)) {
+            boolean matched = likeRepository.existsBySenderAndReceiver(receiver, sender);
+            return new LikeResponse(matched);
+        }
+
         likeRepository.save(new Like(sender, receiver));
 
         boolean matched = likeRepository.existsBySenderAndReceiver(receiver, sender);
-        if (matched) {
+        if (matched && !matchRepository.existsByUser1AndUser2OrUser2AndUser1(sender, receiver, receiver, sender)) {
             matchRepository.save(new Match(sender, receiver));
         }
 
@@ -67,8 +76,7 @@ public class MatchingService {
         excludeIds.add(user.getId());
         likeRepository.findBySender(user).forEach(l -> excludeIds.add(l.getReceiver().getId()));
 
-        return userRepository.findAll().stream()
-                .filter(u -> !excludeIds.contains(u.getId()))
+        return userRepository.findAllExcludingIds(excludeIds).stream()
                 .map(u -> new CandidateResponse(u.getId(), u.getName()))
                 .toList();
     }

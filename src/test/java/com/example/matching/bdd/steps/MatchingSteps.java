@@ -53,13 +53,7 @@ public class MatchingSteps {
 
     @前提("相手からすでにいいねをもらっている")
     public void 相手からすでにいいねをもらっている() {
-        registerAndLogin("hanako@example.com", "鈴木花子");
-        Long myId = userRepository.findByEmail("taro@example.com").get().getId();
-        Long otherId = userRepository.findByEmail("hanako@example.com").get().getId();
-        scenarioContext.setTargetUserId(otherId);
-
-        String otherToken = loginAndGetToken("hanako@example.com");
-        postWithToken("/likes/" + myId, otherToken);
+        setupOtherUserAndReceiveLike("hanako@example.com", "鈴木花子");
     }
 
     @かつ("すでにその相手にいいねを送っている")
@@ -69,14 +63,16 @@ public class MatchingSteps {
 
     @前提("マッチが成立している相手がいる")
     public void マッチが成立している相手がいる() {
-        registerAndLogin("hanako@example.com", "鈴木花子");
-        Long myId = userRepository.findByEmail("taro@example.com").get().getId();
-        Long otherId = userRepository.findByEmail("hanako@example.com").get().getId();
-        scenarioContext.setTargetUserId(otherId);
+        setupOtherUserAndReceiveLike("hanako@example.com", "鈴木花子");
+        postWithAuth("/likes/" + scenarioContext.getTargetUserId());
+    }
 
-        String otherToken = loginAndGetToken("hanako@example.com");
+    private void setupOtherUserAndReceiveLike(String email, String name) {
+        String otherToken = registerAndLogin(email, name);
+        Long myId = userRepository.findByEmail("taro@example.com").get().getId();
+        Long otherId = userRepository.findByEmail(email).get().getId();
+        scenarioContext.setTargetUserId(otherId);
         postWithToken("/likes/" + myId, otherToken);
-        postWithAuth("/likes/" + otherId);
     }
 
     @もし("その相手にいいねを送る")
@@ -165,8 +161,11 @@ public class MatchingSteps {
     private void postWithToken(String path, String token) {
         HttpHeaders headers = bearerHeaders(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        restTemplate.exchange(url(path), HttpMethod.POST,
+        ResponseEntity<String> setupResponse = restTemplate.exchange(url(path), HttpMethod.POST,
                 new HttpEntity<>(headers), String.class);
+        if (!setupResponse.getStatusCode().is2xxSuccessful()) {
+            throw new IllegalStateException("Setup request failed with status: " + setupResponse.getStatusCode());
+        }
     }
 
     private ResponseEntity<String> getWithAuth(String path) {
